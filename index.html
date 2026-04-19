@@ -1257,10 +1257,10 @@
                     </div>
                 </div>
 
-                <div class="reveal" style="transition-delay: 200ms;">
+                <div class="reveal" style="transition-delay: 200ms; height: 100%; display: flex;">
                     <!-- Forms sending via mailto for static HTML -->
                     <form action="mailto:sakshamgarg87@gmail.com" method="POST" enctype="text/plain"
-                        class="contact-form">
+                        class="contact-form" style="display: flex; flex-direction: column; width: 100%;">
                         <div class="form-group">
                             <input type="text" name="Name" class="form-control" placeholder="Your Name" required>
                         </div>
@@ -1270,12 +1270,12 @@
                         <div class="form-group">
                             <input type="text" name="Subject" class="form-control" placeholder="Subject" required>
                         </div>
-                        <div class="form-group">
-                            <textarea name="Message" class="form-control" placeholder="Your Message"
-                                required></textarea>
+                        <div class="form-group" style="flex-grow: 1; display: flex; flex-direction: column;">
+                            <textarea name="Message" class="form-control" placeholder="Your Message" required
+                                style="height: 100%; resize: none; min-height: 150px;"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary submit-btn">Send Message <i
-                                class="fas fa-paper-plane" style="margin-left: 8px;"></i></button>
+                        <button type="submit" class="btn btn-primary submit-btn" style="margin-top: auto;">Send Message
+                            <i class="fas fa-paper-plane" style="margin-left: 8px;"></i></button>
                     </form>
                 </div>
             </div>
