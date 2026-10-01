@@ -536,6 +536,7 @@ ul { margin: 0; padding: 0; }
   .term-table th:nth-child(2), .term-table td:nth-child(2) { display: none; }
   .hero-cta .btn { flex: 1 1 auto; justify-content: center; }
   .cert { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .cert .btn { justify-self: start; }
   .hyp-table { font-size: 12px; }
   .rcard-top, .rcard .bullets, .rcard-foot { padding-left: 18px; padding-right: 18px; }
   .rcard .finding, .mini-kpis { margin-left: 18px; margin-right: 18px; }
