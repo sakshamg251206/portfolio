@@ -1,570 +1,773 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Saksham Garg — Quantitative Research</title>
-<meta name="description" content="Saksham Garg — quantitative research: systematic alpha, market microstructure, statistical modeling.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Saksham Garg — Quant Research · ML · Systems</title>
+<meta name="description" content="Saksham Garg — quantitative research and ML engineering. Cost-aware alpha research, market microstructure, limit-order-book modelling, machine learning and AI systems.">
+<meta name="author" content="Saksham Garg">
+<meta name="theme-color" content="#0a0c0f" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f6f5f1" media="(prefers-color-scheme: light)">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Saksham Garg — Quant Research · ML · Systems">
+<meta property="og:description" content="Cost-aware alpha research, market microstructure, and ML that is tested out of sample.">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+
+<script>
+  // Set theme before first paint to avoid a flash.
+  (function () {
+    var t = null;
+    try { t = localStorage.getItem("theme"); } catch (e) {}
+    if (!t) t = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", t);
+    document.documentElement.classList.add("js");
+  })();
+</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/styles.css">
 
-<style>
-  :root{
-    --paper:#F0F0E9;
-    --panel:#E5E4D9;
-    --ink:#171A20;
-    --muted:#5B6068;
-    --line:#CBCABB;
-    --signal:#7A1620;
-    --signal-soft:#7A162014;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{
-    background:var(--paper);
-    color:var(--ink);
-    font-family:'IBM Plex Sans',sans-serif;
-    font-size:16px;
-    line-height:1.6;
-  }
-  a{color:inherit;text-decoration:none;}
-  .mono{font-family:'IBM Plex Mono',monospace;}
-  .serif{font-family:'Source Serif 4',serif;}
-
-  .wrap{max-width:1040px;margin:0 auto;padding:0 2rem;}
-
-  h1,h2,h3{font-family:'Source Serif 4',serif;font-weight:600;line-height:1.15;letter-spacing:-0.01em;}
-
-  /* ---------- Header ---------- */
-  header{
-    position:sticky;top:0;z-index:100;
-    background:var(--paper);
-    border-bottom:1px solid transparent;
-  }
-  header.scrolled{border-bottom-color:var(--line);}
-  header nav{
-    max-width:1040px;margin:0 auto;padding:0 2rem;
-    height:76px;display:flex;align-items:center;justify-content:space-between;
-  }
-  .wordmark{font-family:'Source Serif 4',serif;font-weight:700;font-size:1.2rem;letter-spacing:0.01em;}
-  .wordmark span{color:var(--signal);}
-  .nav-links{display:flex;gap:2.1rem;list-style:none;align-items:center;}
-  .nav-links a{
-    font-size:0.92rem;color:var(--muted);
-    padding-bottom:3px;border-bottom:1px solid transparent;
-    transition:color .2s ease, border-color .2s ease;
-  }
-  .nav-links a:hover{color:var(--ink);border-color:var(--ink);}
-  .nav-toggle{display:none;background:none;border:none;font-size:1.3rem;color:var(--ink);cursor:pointer;}
-
-  /* ---------- Hero ---------- */
-  #hero{padding:4.5rem 0 4rem;}
-  .hero-kicker{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:0.82rem;color:var(--signal);
-    margin-bottom:1.1rem;
-  }
-  .hero-title{
-    font-size:3.1rem;
-    max-width:15ch;
-    margin-bottom:1.5rem;
-  }
-  .hero-desc{
-    max-width:56ch;
-    color:var(--muted);
-    font-size:1.08rem;
-    margin-bottom:2.75rem;
-  }
-  .hero-actions{display:flex;gap:1.3rem;margin-bottom:3.25rem;flex-wrap:wrap;}
-  .btn{
-    display:inline-flex;align-items:center;gap:0.5rem;
-    padding:0.7rem 1.35rem;
-    font-size:0.92rem;font-weight:500;
-    border:1px solid var(--ink);
-    transition:background .2s ease, color .2s ease;
-  }
-  .btn-solid{background:var(--ink);color:var(--paper);}
-  .btn-solid:hover{background:var(--signal);border-color:var(--signal);}
-  .btn-line{background:transparent;color:var(--ink);}
-  .btn-line:hover{background:var(--ink);color:var(--paper);}
-
-  .stat-strip{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    border-top:1px solid var(--line);
-    border-bottom:1px solid var(--line);
-  }
-  .stat{
-    padding:1.4rem 1.6rem 1.4rem 0;
-    border-left:1px solid var(--line);
-  }
-  .stat:first-child{border-left:none;padding-left:0;}
-  .stat-num{font-family:'IBM Plex Mono',monospace;font-size:1.6rem;font-weight:500;display:block;}
-  .stat-label{font-size:0.78rem;color:var(--muted);margin-top:0.3rem;display:block;}
-
-  /* ---------- Section shell ---------- */
-  section{padding:4.5rem 0;border-top:1px solid var(--line);}
-  .section-head{
-    display:flex;justify-content:space-between;align-items:baseline;
-    margin-bottom:2.5rem;flex-wrap:wrap;gap:0.6rem;
-  }
-  .section-head h2{font-size:1.85rem;}
-  .section-head .section-note{font-size:0.85rem;color:var(--muted);font-family:'IBM Plex Mono',monospace;}
-
-  /* ---------- Profile ---------- */
-  .profile-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:4rem;}
-  .profile-grid p{color:var(--muted);font-size:1.03rem;max-width:56ch;margin-bottom:1.1rem;}
-  .profile-grid p:last-child{margin-bottom:0;}
-  .focus-list{list-style:none;}
-  .focus-list li{
-    padding:0.85rem 0;
-    border-top:1px solid var(--line);
-    font-size:0.97rem;
-  }
-  .focus-list li:last-child{border-bottom:1px solid var(--line);}
-
-  /* ---------- Research / projects ---------- */
-  .project{
-    padding:2.5rem 0;
-    border-top:1px solid var(--line);
-  }
-  .project:first-of-type{border-top:none;padding-top:0;}
-  .project-top{
-    display:flex;justify-content:space-between;align-items:flex-start;
-    gap:2rem;margin-bottom:0.6rem;flex-wrap:wrap;
-  }
-  .project-title{font-size:1.55rem;}
-  .project-link{
-    font-size:0.86rem;color:var(--muted);white-space:nowrap;
-    border-bottom:1px solid var(--line);padding-bottom:2px;
-    display:inline-flex;align-items:center;gap:0.4rem;
-  }
-  .project-link:hover{color:var(--ink);border-color:var(--ink);}
-  .project-tagline{color:var(--muted);font-size:0.95rem;margin-bottom:1.4rem;}
-  .project-stack{
-    font-family:'IBM Plex Mono',monospace;font-size:0.8rem;color:var(--signal);
-    margin-bottom:1.6rem;
-  }
-  .metrics{
-    display:grid;grid-template-columns:repeat(2,1fr);
-    gap:0;
-    border:1px solid var(--line);
-    margin-bottom:1.6rem;
-  }
-  .metric{
-    padding:0.9rem 1.2rem;
-    border-bottom:1px solid var(--line);
-    border-left:1px solid var(--line);
-    display:flex;justify-content:space-between;gap:1rem;font-size:0.9rem;
-  }
-  .metric:nth-child(odd){border-left:none;}
-  .metric:nth-last-child(-n+2){border-bottom:none;}
-  .metric-label{color:var(--muted);}
-  .metric-value{font-family:'IBM Plex Mono',monospace;font-weight:500;text-align:right;}
-  .findings{list-style:none;}
-  .findings li{
-    position:relative;padding-left:1.2rem;margin-bottom:0.7rem;
-    font-size:0.96rem;color:var(--ink);
-  }
-  .findings li::before{
-    content:"–";position:absolute;left:0;color:var(--signal);
-  }
-  .findings li:last-child{margin-bottom:0;}
-
-  /* ---------- Experience ---------- */
-  .exp-row{
-    display:grid;grid-template-columns:200px 1fr;gap:2.5rem;
-    padding:2.2rem 0;border-top:1px solid var(--line);
-  }
-  .exp-row:first-of-type{border-top:none;padding-top:0;}
-  .exp-date{font-family:'IBM Plex Mono',monospace;font-size:0.85rem;color:var(--muted);padding-top:0.2rem;}
-  .exp-role{font-size:1.25rem;margin-bottom:0.2rem;}
-  .exp-org{color:var(--signal);font-size:0.92rem;margin-bottom:1rem;}
-  .exp-cert{font-size:0.82rem;color:var(--muted);margin-top:1rem;display:inline-block;border-bottom:1px solid var(--line);}
-  .exp-cert:hover{color:var(--ink);border-color:var(--ink);}
-
-  /* ---------- Skills ---------- */
-  .skills-table{border-top:1px solid var(--line);}
-  .skill-row{
-    display:grid;grid-template-columns:200px 1fr;gap:2.5rem;
-    padding:1rem 0;border-bottom:1px solid var(--line);
-    font-size:0.95rem;
-  }
-  .skill-cat{font-family:'IBM Plex Mono',monospace;font-size:0.82rem;color:var(--signal);padding-top:0.15rem;}
-  .skill-items{color:var(--muted);}
-
-  /* ---------- Achievements ---------- */
-  .ach-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);}
-  .ach{padding:2rem;border-left:1px solid var(--line);}
-  .ach:first-child{border-left:none;}
-  .ach-num{font-family:'IBM Plex Mono',monospace;font-size:1.9rem;color:var(--signal);display:block;margin-bottom:0.5rem;}
-  .ach h3{font-size:1.1rem;margin-bottom:0.6rem;}
-  .ach p{font-size:0.92rem;color:var(--muted);}
-
-  /* ---------- Education ---------- */
-  .edu-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:4rem;}
-  .edu-block h3{font-size:1.3rem;margin-bottom:0.3rem;}
-  .edu-sub{font-family:'IBM Plex Mono',monospace;font-size:0.82rem;color:var(--muted);margin-bottom:1rem;}
-  .edu-block p{color:var(--muted);font-size:0.93rem;}
-  .cert-list{list-style:none;}
-  .cert-list li{
-    padding:0.9rem 0;border-top:1px solid var(--line);font-size:0.92rem;
-  }
-  .cert-list li:last-child{border-bottom:1px solid var(--line);}
-  .cert-org{display:block;color:var(--muted);font-size:0.82rem;margin-top:0.2rem;}
-
-  /* ---------- Contact ---------- */
-  #contact{padding-bottom:5.5rem;}
-  .contact-intro{max-width:52ch;color:var(--muted);font-size:1.03rem;margin-bottom:2.5rem;}
-  .contact-rows{border-top:1px solid var(--line);}
-  .contact-row{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:1.1rem 0;border-bottom:1px solid var(--line);
-    transition:padding-left .2s ease;
-  }
-  .contact-row:hover{padding-left:0.5rem;}
-  .contact-row .c-label{display:flex;align-items:center;gap:0.8rem;font-size:1rem;}
-  .contact-row .c-label i{color:var(--signal);width:1.1rem;text-align:center;}
-  .contact-row .c-value{font-family:'IBM Plex Mono',monospace;font-size:0.9rem;color:var(--muted);}
-  .contact-row:hover .c-value{color:var(--ink);}
-
-  footer{
-    border-top:1px solid var(--line);
-    padding:1.75rem 0;
-    font-size:0.82rem;color:var(--muted);
-    display:flex;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;
-  }
-
-  /* ---------- Reveal (single hero moment only) ---------- */
-  .reveal{opacity:0;transform:translateY(14px);animation:riseIn .7s ease forwards;}
-  @keyframes riseIn{to{opacity:1;transform:translateY(0);}}
-
-  @media (prefers-reduced-motion: reduce){
-    .reveal{animation:none;opacity:1;transform:none;}
-    html{scroll-behavior:auto;}
-  }
-
-  /* ---------- Responsive ---------- */
-  @media (max-width:860px){
-    .profile-grid, .edu-grid{grid-template-columns:1fr;gap:2rem;}
-    .stat-strip{grid-template-columns:repeat(2,1fr);}
-    .stat:nth-child(3){border-left:none;padding-left:0;}
-    .ach-grid{grid-template-columns:1fr;}
-    .ach{border-left:none;border-top:1px solid var(--line);}
-    .ach:first-child{border-top:none;}
-  }
-  @media (max-width:680px){
-    .wrap{padding:0 1.25rem;}
-    header nav{padding:0 1.25rem;}
-    .nav-links{
-      position:fixed;top:76px;left:0;width:100%;height:calc(100vh - 76px);
-      background:var(--paper);flex-direction:column;justify-content:flex-start;
-      padding:2.5rem 1.25rem;gap:1.6rem;
-      transform:translateX(-100%);transition:transform .3s ease;
-      border-top:1px solid var(--line);
-    }
-    .nav-links.active{transform:translateX(0);}
-    .nav-toggle{display:block;}
-    .hero-title{font-size:2.2rem;}
-    .exp-row, .skill-row{grid-template-columns:1fr;gap:0.5rem;}
-    .metrics{grid-template-columns:1fr;}
-    .metric{border-left:none !important;}
-    .metric:nth-last-child(-n+2){border-bottom:1px solid var(--line);}
-    .metric:last-child{border-bottom:none;}
-    section{padding:3rem 0;}
-  }
-</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Saksham Garg",
+  "email": "mailto:sakshamgarg87@gmail.com",
+  "jobTitle": "Quantitative Research / ML Engineering",
+  "alumniOf": "The LNM Institute of Information Technology",
+  "sameAs": [
+    "https://github.com/sakshamg251206",
+    "https://www.linkedin.com/in/saksham-garg-997560319/",
+    "https://codeforces.com/profile/sakshamgarg87"
+  ]
+}
+</script>
 </head>
 
 <body>
 
-<header id="header">
-  <nav>
-    <a href="#hero" class="wordmark">S<span>.</span>GARG</a>
+<!-- Icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-github" viewBox="0 0 24 24"><path class="icon-fill" d="M12 .5C5.65.5.5 5.65.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></symbol>
+    <symbol id="i-linkedin" viewBox="0 0 24 24"><path class="icon-fill" d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0Z"/></symbol>
+    <symbol id="i-codeforces" viewBox="0 0 24 24"><path class="icon-fill" d="M4.5 7.5A1.5 1.5 0 0 1 6 9v10.5A1.5 1.5 0 0 1 4.5 21h-3A1.5 1.5 0 0 1 0 19.5V9a1.5 1.5 0 0 1 1.5-1.5h3Zm9-4.5A1.5 1.5 0 0 1 15 4.5v15a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 19.5v-15A1.5 1.5 0 0 1 10.5 3h3Zm9 7.5A1.5 1.5 0 0 1 24 12v7.5a1.5 1.5 0 0 1-1.5 1.5h-3a1.5 1.5 0 0 1-1.5-1.5V12a1.5 1.5 0 0 1 1.5-1.5h3Z"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2.5" y="4.5" width="19" height="15" rx="2"/><path d="m3 6 9 7 9-7"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 20h16"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></symbol>
+    <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></symbol>
+    <symbol id="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 6-7"/></symbol>
+    <symbol id="i-brain" viewBox="0 0 24 24"><circle cx="5" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="19" cy="18" r="2"/><path d="m6.6 7.2 3.8 3.6m3.2 0 3.8-3.6M6.6 16.8l3.8-3.6m3.2 0 3.8 3.6"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3v4m0 10v4M3 12h4m10 0h4"/><path d="m12 8 1.5 2.5L16 12l-2.5 1.5L12 16l-1.5-2.5L8 12l2.5-1.5L12 8Z"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v3m6-3v3M9 19v3m6-3v3M2 9h3m-3 6h3m14-6h3m-3 6h3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></symbol>
+  </defs>
+</svg>
+
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ================= NAV ================= -->
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a href="#top" class="brand" aria-label="Saksham Garg — home">
+      <span class="brand-mark">SG</span>
+      <span>saksham.garg<span class="cursor">_</span></span>
+    </a>
     <ul class="nav-links" id="navLinks">
-      <li><a href="#profile">Profile</a></li>
+      <li><a href="#about">About</a></li>
       <li><a href="#research">Research</a></li>
+      <li><a href="#projects">Projects</a></li>
       <li><a href="#experience">Experience</a></li>
+      <li><a href="#achievements">Achievements</a></li>
       <li><a href="#skills">Skills</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
-    <button class="nav-toggle" id="navToggle" aria-label="Menu"><i class="fas fa-bars"></i></button>
-  </nav>
+    <div class="nav-actions">
+      <a class="btn btn-sm btn-ghost" href="assets/docs/Saksham_Garg_Resume.pdf" target="_blank" rel="noopener">
+        <svg class="icon"><use href="#i-file"/></svg><span class="hide-sm">Résumé</span>
+      </a>
+      <button class="icon-btn theme-toggle" id="themeToggle" type="button" aria-label="Toggle colour theme">
+        <svg class="icon icon-sun"><use href="#i-sun"/></svg>
+        <svg class="icon icon-moon"><use href="#i-moon"/></svg>
+      </button>
+      <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+        <svg class="icon"><use href="#i-menu"/></svg>
+      </button>
+    </div>
+  </div>
 </header>
 
-<main class="wrap">
+<main id="main">
 
-  <!-- Hero -->
-  <section id="hero" style="border-top:none;">
-    <div class="hero-kicker mono reveal">QUANTITATIVE RESEARCH</div>
-    <h1 class="hero-title reveal" style="animation-delay:.05s;">Systematic alpha, built from first principles.</h1>
-    <p class="hero-desc reveal" style="animation-delay:.1s;">
-      I research and test trading signals the way academic work gets graded — walk-forward validated,
-      transaction-cost aware, and honest about what fails to survive out of sample. Recent work covers
-      cost-aware alpha research across 15 ETFs and limit-order-book prediction on 400K+ NASDAQ market events.
-    </p>
-    <div class="hero-actions reveal" style="animation-delay:.15s;">
-      <a href="#research" class="btn btn-solid">View research</a>
-      <a href="https://drive.google.com/file/d/1Ejf-BKQwr6uuEMr_v2VC8ZSCXqMPoTIp/view?usp=drive_link" target="_blank" class="btn btn-line">Résumé</a>
-    </div>
-
-    <div class="stat-strip reveal" style="animation-delay:.2s;">
-      <div class="stat">
-        <span class="stat-num">0.850</span>
-        <span class="stat-label">OOS Sharpe, cross-sectional momentum</span>
-      </div>
-      <div class="stat">
-        <span class="stat-num">2.64</span>
-        <span class="stat-label">t-stat (p = 0.008)</span>
-      </div>
-      <div class="stat">
-        <span class="stat-num">15</span>
-        <span class="stat-label">ETFs, 2,422 trading days</span>
-      </div>
-      <div class="stat">
-        <span class="stat-num">400K+</span>
-        <span class="stat-label">NASDAQ L2 order-book events</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- Profile -->
-  <section id="profile">
-    <div class="section-head">
-      <h2>Profile</h2>
-      <span class="section-note mono">B.Tech–M.Tech ECE, 2024–2029</span>
-    </div>
-    <div class="profile-grid">
+<!-- ================= HERO ================= -->
+<section class="hero" id="top">
+  <div class="hero-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="wrap">
+    <div class="hero-grid">
       <div>
-        <p>
-          I build research systems the way a desk would — signal generation, walk-forward validation,
-          transaction-cost modeling, and out-of-sample testing, rather than backtests that only look
-          good in hindsight. Recent work spans cost-aware alpha research across 15 ETFs and 2,422 trading
-          days, and limit-order-book analysis over 400,000+ NASDAQ market events.
+        <div class="status-pill"><span class="status-dot"></span>B.Tech–M.Tech ECE @ LNMIIT · open to quant research &amp; ML internships</div>
+        <h1>Saksham<br><span class="dim">Garg.</span></h1>
+        <div class="hero-role">Quant Research &middot; Machine Learning &middot; AI Systems &middot; C++ / Python</div>
+        <p class="hero-lede">
+          I build research systems that try hard to prove themselves wrong &mdash; <strong>walk-forward validated, cost-aware alpha research</strong>,
+          <strong>limit-order-book and order-flow studies</strong>, and ML models judged only on what survives out of sample.
+          Pre-registered hypotheses, held-out test days, and negative results reported as such.
         </p>
-        <p>
-          The common thread is treating every result with suspicion until it survives being tested
-          honestly: regime breaks, parameter sensitivity, and realistic execution costs included.
-        </p>
-      </div>
-      <ul class="focus-list">
-        <li>Alpha research &amp; signal validation</li>
-        <li>Market microstructure &amp; order-book modeling</li>
-        <li>Statistical &amp; time-series methods</li>
-        <li>Transaction-cost &amp; execution modeling</li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- Research -->
-  <section id="research">
-    <div class="section-head">
-      <h2>Research</h2>
-      <span class="section-note mono">Selected projects</span>
-    </div>
-
-    <div class="project">
-      <div class="project-top">
-        <h3 class="project-title">Systematic Alpha Research Lab</h3>
-        <a href="https://github.com/sakshamg251206" target="_blank" class="project-link"><i class="fab fa-github"></i> Repository</a>
-      </div>
-      <div class="project-tagline">Cost-aware quantitative signal research across a 15-ETF universe.</div>
-      <div class="project-stack mono">Python · Pandas · NumPy · SciPy · yfinance · Next.js · TypeScript</div>
-
-      <div class="metrics">
-        <div class="metric"><span class="metric-label">OOS Sharpe</span><span class="metric-value">0.850</span></div>
-        <div class="metric"><span class="metric-label">Sortino</span><span class="metric-value">1.184</span></div>
-        <div class="metric"><span class="metric-label">CAGR</span><span class="metric-value">9.15%</span></div>
-        <div class="metric"><span class="metric-label">t-stat / p-value</span><span class="metric-value">2.64 / 0.008</span></div>
-        <div class="metric"><span class="metric-label">Universe</span><span class="metric-value">15 ETFs, 2017–2026</span></div>
-        <div class="metric"><span class="metric-label">Sample</span><span class="metric-value">2,422 trading days</span></div>
+        <div class="hero-cta">
+          <a href="#research" class="btn btn-primary"><svg class="icon"><use href="#i-chart"/></svg>View research</a>
+          <a href="assets/docs/Saksham_Garg_Resume.pdf" class="btn" download><svg class="icon"><use href="#i-download"/></svg>Download résumé</a>
+          <a href="#contact" class="btn btn-ghost"><svg class="icon"><use href="#i-mail"/></svg>Get in touch</a>
+        </div>
+        <div class="hero-links">
+          <a href="https://github.com/sakshamg251206" target="_blank" rel="noopener"><svg class="icon"><use href="#i-github"/></svg>sakshamg251206</a>
+          <a href="https://www.linkedin.com/in/saksham-garg-997560319/" target="_blank" rel="noopener"><svg class="icon"><use href="#i-linkedin"/></svg>LinkedIn</a>
+          <a href="https://codeforces.com/profile/sakshamgarg87" target="_blank" rel="noopener"><svg class="icon"><use href="#i-codeforces"/></svg>Codeforces · Expert</a>
+        </div>
       </div>
 
-      <ul class="findings">
-        <li>Validated a multi-signal ensemble at 0.643 OOS Sharpe, 6.88% CAGR, and a -16.37% max drawdown, net of transaction costs and execution lag.</li>
-        <li>Rejected short-term reversal once OOS Sharpe fell to 0.468 against 18.4× annualized turnover under regime, crisis, and parameter-robustness testing.</li>
-        <li>Controlled look-ahead and cost bias with a 1-day execution lag, monthly rebalancing, 10 bps transaction costs plus 5 bps slippage, and full turnover tracking.</li>
-      </ul>
-    </div>
-
-    <div class="project">
-      <div class="project-top">
-        <h3 class="project-title">Real-Time Order Book Imbalance Predictor</h3>
-        <a href="https://github.com/sakshamg251206" target="_blank" class="project-link"><i class="fab fa-github"></i> Repository</a>
+      <div class="terminal" aria-label="Summary of research results">
+        <div class="term-bar">
+          <div class="term-dots"><i></i><i></i><i></i></div>
+          <div class="term-title">~/research/verdicts.log</div>
+          <div class="term-live"><span class="status-dot"></span>OOS</div>
+        </div>
+        <div class="term-body">
+          <div class="term-cmd"><span class="prompt">$</span> tail -n 6 verdicts.log</div>
+          <table class="term-table">
+            <thead><tr><th>Hypothesis</th><th>Test</th><th style="text-align:right">Result</th></tr></thead>
+            <tbody>
+              <tr class="term-row">
+                <td>X-sectional momentum<span class="sub">15 ETFs · 2017–2026</span></td>
+                <td>OOS Sharpe <span style="color:var(--text)">0.850</span><span class="sub">t = 2.64, p = 0.008</span></td>
+                <td class="num"><span class="tag tag-pos">survived</span></td>
+              </tr>
+              <tr class="term-row">
+                <td>Short-term reversal<span class="sub">same universe</span></td>
+                <td>OOS Sharpe 0.468<span class="sub">18.4× turnover</span></td>
+                <td class="num"><span class="tag tag-neg">rejected</span></td>
+              </tr>
+              <tr class="term-row">
+                <td>OFI predicts next 10 s<span class="sub">BTC · ETH · WLD perps</span></td>
+                <td>OOS R² ≤ 0<span class="sub">explains 69–73% same-interval</span></td>
+                <td class="num"><span class="tag tag-neg">rejected</span></td>
+              </tr>
+              <tr class="term-row">
+                <td>KM fill curve is biased<span class="sub">AAPL MBO · 791k orders</span></td>
+                <td>16% est. vs 43% truth<span class="sub">60 s horizon, CI excl. 0</span></td>
+                <td class="num"><span class="tag tag-pos">confirmed</span></td>
+              </tr>
+              <tr class="term-row">
+                <td>WorldQuant BRAIN alpha<span class="sub">positive Sharpe 2019–2023</span></td>
+                <td>Sharpe 1.72<span class="sub">fitness 1.77</span></td>
+                <td class="num"><span class="tag tag-amb">gold</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="term-foot">net of costs · walk-forward · held-out <span class="caret"></span></div>
+        </div>
       </div>
-      <div class="project-tagline">High-frequency prediction engine over live L2 market data.</div>
-      <div class="project-stack mono">Python · CatBoost · XGBoost · scikit-learn · WebSockets · SQLite · Parquet · SHAP</div>
-
-      <div class="metrics">
-        <div class="metric"><span class="metric-label">Log loss</span><span class="metric-value">0.0063</span></div>
-        <div class="metric"><span class="metric-label">Inference latency</span><span class="metric-value">&lt; 50 ms</span></div>
-        <div class="metric"><span class="metric-label">Depth levels</span><span class="metric-value">20 (L2)</span></div>
-        <div class="metric"><span class="metric-label">Update frequency</span><span class="metric-value">100 ms</span></div>
-        <div class="metric"><span class="metric-label">Features engineered</span><span class="metric-value">30+</span></div>
-        <div class="metric"><span class="metric-label">Horizon</span><span class="metric-value">1s / 3s direction</span></div>
-      </div>
-
-      <ul class="findings">
-        <li>Engineered 30+ microstructure features — multi-level order-book imbalance, micro-price deviation, exponential volume decay, and rolling volatility at 100ms/500ms windows.</li>
-        <li>Built a low-latency pipeline on Binance L2 WebSockets with async SQLite/Parquet persistence at microsecond-stamped, 100ms update frequency.</li>
-        <li>Benchmarked CatBoost, XGBoost, and logistic regression for forward price direction, reaching 0.0063 log loss with sub-50ms inference.</li>
-        <li>Added SHAP explainability and a Streamlit dashboard for live imbalance, volume-decay curves, and model calibration.</li>
-      </ul>
     </div>
-  </section>
+  </div>
 
-  <!-- Experience -->
-  <section id="experience">
-    <div class="section-head">
-      <h2>Experience</h2>
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-track" id="tickerTrack">
+      <div class="ticker-item"><span class="k">XS-Mom OOS Sharpe</span><span class="v">0.850</span><span class="d">p=0.008</span></div>
+      <div class="ticker-item"><span class="k">Sortino</span><span class="v">1.184</span></div>
+      <div class="ticker-item"><span class="k">Momentum CAGR (net)</span><span class="v">9.15%</span></div>
+      <div class="ticker-item"><span class="k">WQ best alpha</span><span class="v">SR 1.72</span><span class="d">fit 1.77</span></div>
+      <div class="ticker-item"><span class="k">Codeforces</span><span class="v">1603</span><span class="d">Expert</span></div>
+      <div class="ticker-item"><span class="k">AAPL MBO events</span><span class="v">1,581,219</span></div>
+      <div class="ticker-item"><span class="k">OFI same-interval R²</span><span class="v">0.69–0.73</span></div>
+      <div class="ticker-item"><span class="k">LOB features</span><span class="v">30+</span><span class="d">&lt;50 ms infer</span></div>
+      <div class="ticker-item"><span class="k">QKD attack AUC</span><span class="v">0.987</span></div>
+      <div class="ticker-item"><span class="k">Amazon ML · OOF F0.5</span><span class="v">0.9614</span></div>
     </div>
+  </div>
+</section>
 
-    <div class="exp-row">
-      <div class="exp-date mono">May 2026 – Jul 2026</div>
+<!-- ================= ABOUT ================= -->
+<section class="section" id="about">
+  <div class="wrap">
+    <div class="about-grid">
       <div>
-        <div class="exp-role">AI/ML Intern</div>
-        <div class="exp-org">Affy Pharma Pvt. Ltd. — Noida, India</div>
-        <ul class="findings">
-          <li>Cut manual data-preparation effort by 35% with automated preprocessing and cleaning pipelines for manufacturing and quality-control records.</li>
-          <li>Reached up to 91% validation accuracy comparing Random Forest, XGBoost, and logistic regression for predictive analytics.</li>
-          <li>Standardized preprocessing, model-selection, and evaluation workflows, and documented results for the team.</li>
-          <li>Worked with developers to bring models into production inside internal applications.</li>
+        <div class="section-head reveal">
+          <span class="eyebrow"><span class="idx">01</span> About</span>
+          <h2>Research engineer at the intersection of markets, statistics and software.</h2>
+        </div>
+        <div class="about-copy reveal">
+          <p>Quantitative-research-focused engineer with hands-on work in systematic alpha research, market microstructure, statistical modelling and machine learning.</p>
+          <p>
+            I've built a cost-aware signal-evaluation lab over 15 ETFs and 2,422 out-of-sample trading days, a live Binance L2 order-book prediction engine,
+            a pre-registered replication of Cont–Kukanov–Stoikov order-flow imbalance on crypto perpetuals, and a C++20/Python engine that measures how
+            wrong passive-fill backtests are on Nasdaq market-by-order data.
+          </p>
+          <p>
+            Foundations in probability, statistics, time-series analysis, stochastic calculus, C++ and Python; currently a B.Tech–M.Tech student in
+            Electronics &amp; Communication Engineering at LNMIIT Jaipur.
+          </p>
+          <ul class="principles">
+            <li><span class="n">01</span><span><b>Out-of-sample or it didn't happen.</b> Walk-forward splits, embargoes, held-out test days that are read exactly once.</span></li>
+            <li><span class="n">02</span><span><b>Costs are part of the signal.</b> Execution lag, 10 bps fees + 5 bps slippage, turnover limits, break-even cost analysis.</span></li>
+            <li><span class="n">03</span><span><b>Negative results are results.</b> Rejected signals and failed hypotheses are documented, not buried.</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tracks reveal">
+        <a class="track" href="#research">
+          <span class="track-icon"><svg class="icon"><use href="#i-chart"/></svg></span>
+          <h3>Quant Research &amp; Trading</h3>
+          <p>Alpha research, backtesting, market microstructure, order-flow and fill-model studies.</p>
+          <span class="count">5 projects · WorldQuant Gold</span>
+        </a>
+        <a class="track" href="#projects" data-jump-filter="ml">
+          <span class="track-icon"><svg class="icon"><use href="#i-brain"/></svg></span>
+          <h3>Machine Learning &amp; Data Science</h3>
+          <p>Gradient boosting, calibration, SHAP, entity resolution, time-series and classical ML pipelines.</p>
+          <span class="count">3 projects · Amazon ML Challenge · 2 internships</span>
+        </a>
+        <a class="track" href="#projects" data-jump-filter="genai">
+          <span class="track-icon"><svg class="icon"><use href="#i-spark"/></svg></span>
+          <h3>Generative AI</h3>
+          <p>Local RAG with citations, multi-agent red-teaming of RAG systems, on-device multimodal LLMs.</p>
+          <span class="count">4 projects</span>
+        </a>
+        <a class="track" href="#projects" data-jump-filter="systems">
+          <span class="track-icon"><svg class="icon"><use href="#i-cpu"/></svg></span>
+          <h3>Software &amp; Systems</h3>
+          <p>C++20 engines, async streaming pipelines, FastAPI/Node services, typed &amp; tested, Dockerised, CI on every push.</p>
+          <span class="count">Codeforces Expert · 1603</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= RESEARCH ================= -->
+<section class="section" id="research">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow"><span class="idx">02</span> Quant research</span>
+      <h2>Selected research</h2>
+      <p>Each project states a hypothesis, fixes the test before looking at results, and reports what survived &mdash; net of costs and out of sample.</p>
+    </div>
+
+    <!-- Featured: Systematic Alpha Lab -->
+    <article class="feature reveal">
+      <div class="feature-head">
+        <div>
+          <div class="feature-kicker"><span class="tag tag-pos">Featured</span><span>Alpha research · Backtesting · Validation</span></div>
+          <h3>Systematic Alpha Research Lab</h3>
+          <p>
+            Cost-aware evaluation of five systematic signals on a 15-ETF multi-asset universe using adjusted daily data from 2006 to 2026.
+            Every signal passes through the same pipeline &mdash; SHA-256 data provenance, monthly rebalancing with a 1-day execution lag,
+            transaction costs and slippage, walk-forward and regime/crisis tests &mdash; and receives a rule-based verdict.
+          </p>
+        </div>
+        <div class="feature-links">
+          <a class="btn btn-sm" href="https://github.com/sakshamg251206/systematic-alpha-lab" target="_blank" rel="noopener"><svg class="icon"><use href="#i-github"/></svg>Repository</a>
+        </div>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi"><span class="v pos">0.850</span><span class="l">OOS Sharpe, cross-sectional momentum</span></div>
+        <div class="kpi"><span class="v">1.184</span><span class="l">Sortino ratio</span></div>
+        <div class="kpi"><span class="v">2.64</span><span class="l">t-stat · p = 0.008</span></div>
+        <div class="kpi"><span class="v">9.15%</span><span class="l">CAGR, net of costs</span></div>
+        <div class="kpi"><span class="v">2,422</span><span class="l">OOS trading days, 2017–2026</span></div>
+        <div class="kpi"><span class="v neg">−16.37%</span><span class="l">Max drawdown, ensemble</span></div>
+      </div>
+
+      <div class="feature-body">
+        <div>
+          <div class="chart-head">
+            <div class="chart-title">Net equity, growth of 1.0 <span>· log scale</span></div>
+            <div class="legend" id="chartLegend"></div>
+          </div>
+          <div class="chart" id="equityChart" role="img" aria-label="Equity curves of five signals from 2006 to 2026, net of transaction costs. Cross-sectional momentum and the ensemble survive validation."></div>
+          <p class="chart-note">Pipeline output from the repository (<span class="mono">equity-curves.json</span>). Shaded region marks the out-of-sample period. Hover or tap for values.</p>
+        </div>
+        <div>
+          <div class="verdicts-caption">Rule-based verdicts</div>
+          <table class="verdicts" id="verdictTable">
+            <thead><tr><th>Signal</th><th class="r">IS SR</th><th class="r">OOS SR</th><th class="r">Verdict</th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <ul class="bullets" style="margin-top:22px">
+            <li>Validated a multi-signal <b>ensemble at 0.643 OOS Sharpe</b>, 6.88% CAGR and −16.37% max drawdown after costs and execution lag.</li>
+            <li><b>Rejected short-term reversal</b>: OOS Sharpe fell to 0.468 at 18.4× annualised turnover under regime, crisis and parameter-robustness tests.</li>
+            <li>Look-ahead and cost bias controlled with a <b>1-day execution lag</b>, monthly rebalancing, <b>10 bps costs + 5 bps slippage</b>, cash fallback and turnover tracking.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="feature-foot">
+        <div class="stack">
+          <span class="chip">Python</span><span class="chip">pandas</span><span class="chip">NumPy</span><span class="chip">SciPy</span><span class="chip">yfinance</span><span class="chip">pytest · 37 tests</span><span class="chip">Next.js</span><span class="chip">TypeScript</span>
+        </div>
+        <a class="link-arrow" href="https://github.com/sakshamg251206/systematic-alpha-lab/tree/main/docs" target="_blank" rel="noopener">Validation protocol <svg class="icon"><use href="#i-arrow"/></svg></a>
+      </div>
+    </article>
+
+    <div class="research-grid">
+
+      <!-- ShadowFill -->
+      <article class="rcard reveal">
+        <div class="rcard-top">
+          <div class="feature-kicker"><span>Market microstructure · Execution</span></div>
+          <h3>ShadowFill</h3>
+          <p class="question">How wrong are passive-fill backtests? Measured against a ground truth computed by exact queue arithmetic on Nasdaq market-by-order data &mdash; not modelled.</p>
+        </div>
+        <div class="finding">
+          <span class="label">Headline</span>
+          A passive order resting at AAPL's touch fills <b>43%</b> of the time within a minute; Kaplan–Meier on the same book says <b>16%</b>. Every bootstrap interval excludes zero.
+        </div>
+        <div class="mini-kpis">
+          <div><span class="v">1.58M</span><span class="l">MBO events, full session</span></div>
+          <div><span class="v">791k</span><span class="l">real orders shadowed</span></div>
+          <div><span class="v">+25%</span><span class="l">L2 fill over-promise at 1 s</span></div>
+        </div>
+        <ul class="bullets">
+          <li>Ground-truth engine built twice: a readable <b>Python oracle</b> and a <b>C++20 engine</b> held to byte-identical output.</li>
+          <li>TotalView-ITCH adapter, Parquet materialisation, block-bootstrap intervals and manifests pinning commit, input hash and config for every number.</li>
+          <li>5 pre-registered hypotheses across 6 symbols; 3 came back negative and are reported as such. Bias is robust to 20 ms latency; IPCW removes only 3% of it.</li>
         </ul>
-      </div>
-    </div>
+        <div class="rcard-foot">
+          <div class="stack"><span class="chip">C++20</span><span class="chip">Python</span><span class="chip">CMake</span><span class="chip">Parquet</span><span class="chip">Survival analysis</span></div>
+          <a class="link-arrow" href="https://github.com/sakshamg251206/shadowfill" target="_blank" rel="noopener">GitHub <svg class="icon"><use href="#i-arrow"/></svg></a>
+        </div>
+      </article>
 
-    <div class="exp-row">
-      <div class="exp-date mono">May 2025 – Jul 2025</div>
-      <div>
-        <div class="exp-role">Research Intern — Quantum Computing &amp; Cryptography</div>
-        <div class="exp-org">Indian Institute of Technology, Jodhpur</div>
-        <ul class="findings">
-          <li>Built a 4-layer QKD security framework in Qiskit simulating BB84 under depolarizing noise, intercept-resend, and PNS attacks — 10,000 labeled sessions across 5 attack/channel classes.</li>
-          <li>Reached 80.6% multiclass accuracy and 0.987 binary ROC-AUC with a Random Forest trained on QBER, timing jitter, sifting ratio, and QBER variance.</li>
-          <li>Trained a PyTorch LSTM on 20-step QBER time series to catch temporal attack patterns, benchmarked against the Random Forest baseline.</li>
-          <li>Designed a closed-loop defense policy — continue, harden, or abort — evaluated at up to four dynamic checkpoints.</li>
+      <!-- OFI crypto perps -->
+      <article class="rcard reveal">
+        <div class="rcard-top">
+          <div class="feature-kicker"><span>Order flow · Replication study</span></div>
+          <h3>Order-Flow Imbalance in Crypto Perps</h3>
+          <p class="question">A pre-registered replication of Cont, Kukanov &amp; Stoikov (2014) on Binance USDⓈ-M perpetuals &mdash; 31 days per symbol, native top-of-book data.</p>
+        </div>
+        <div class="finding neg">
+          <span class="label">Finding · explains, doesn't predict</span>
+          OFI explains a median <b>69–73%</b> of same-interval mid-price variance, but its out-of-sample R² for the <b>next</b> 10 s is <b>≤ 0</b> on every symbol.
+        </div>
+        <table class="hyp-table">
+          <thead><tr><th>Hyp.</th><th>Claim</th><th>Result</th></tr></thead>
+          <tbody>
+            <tr><td>H1</td><td>OFI explains ΔMid (median R²)</td><td><span class="tag tag-pos">0.69–0.73</span></td></tr>
+            <tr><td>H3</td><td>β ∝ 1/depth<sup>λ</sup> (ETH, WLD)</td><td><span class="tag tag-pos">λ̂ 1.13 · 1.08</span></td></tr>
+            <tr><td>H5</td><td>Predicts next interval OOS</td><td><span class="tag tag-neg">R² ≤ 0</span></td></tr>
+            <tr><td>H6</td><td>Survives 5 bps taker fee</td><td><span class="tag tag-neg">0.07–0.14 bps</span></td></tr>
+          </tbody>
+        </table>
+        <ul class="bullets">
+          <li>Hypotheses frozen before the first result; every deviation dated in a decision log; a trial ledger keeps the multiple-testing count visible.</li>
+          <li>Held-out test days readable only by a one-shot final script; 86 tests incl. a no-look-ahead property test.</li>
         </ul>
-        <a href="https://drive.google.com/file/d/1YdqQWmmu2sLstR6ItwPYskD5IMqRMPn_/view?usp=drive_link" target="_blank" class="exp-cert">Internship certificate</a>
-      </div>
-    </div>
-  </section>
+        <div class="rcard-foot">
+          <div class="stack"><span class="chip">Python</span><span class="chip">statsmodels</span><span class="chip">pandas</span><span class="chip">PyArrow</span><span class="chip">Tardis.dev</span><span class="chip">pytest</span></div>
+          <a class="link-arrow" href="https://github.com/sakshamg251206/ofi-crypto-perps" target="_blank" rel="noopener">GitHub <svg class="icon"><use href="#i-arrow"/></svg></a>
+        </div>
+      </article>
 
-  <!-- Skills -->
-  <section id="skills">
-    <div class="section-head">
-      <h2>Skills</h2>
-    </div>
-    <div class="skills-table">
-      <div class="skill-row">
-        <div class="skill-cat mono">LANGUAGES</div>
-        <div class="skill-items">Python, C++, SQL, JavaScript</div>
-      </div>
-      <div class="skill-row">
-        <div class="skill-cat mono">QUANT FINANCE</div>
-        <div class="skill-items">Alpha research, statistical backtesting, time-series analysis, market microstructure, transaction-cost modeling, walk-forward validation, probability &amp; statistics</div>
-      </div>
-      <div class="skill-row">
-        <div class="skill-cat mono">QUANT METHODS</div>
-        <div class="skill-items">Statistical modeling, regression, classification, parameter sensitivity, out-of-sample testing, risk analysis</div>
-      </div>
-      <div class="skill-row">
-        <div class="skill-cat mono">ML / DATA</div>
-        <div class="skill-items">PyTorch, TensorFlow, scikit-learn, Pandas, NumPy, SciPy</div>
-      </div>
-      <div class="skill-row">
-        <div class="skill-cat mono">TOOLS</div>
-        <div class="skill-items">Git, Linux/macOS, Docker, FastAPI, Next.js, Qiskit, Jupyter</div>
-      </div>
-    </div>
-  </section>
+      <!-- Order book ML -->
+      <article class="rcard reveal">
+        <div class="rcard-top">
+          <div class="feature-kicker"><span>High-frequency ML · Streaming</span></div>
+          <h3>Real-Time Order Book Imbalance Predictor</h3>
+          <p class="question">Short-horizon price-direction forecasting from the live Binance L2 order book, served as calibrated BUY / HOLD / SELL probabilities on a live dashboard.</p>
+        </div>
+        <div class="mini-kpis">
+          <div><span class="v">0.0063</span><span class="l">log loss, 1 s / 3 s direction</span></div>
+          <div><span class="v">&lt;50 ms</span><span class="l">inference latency</span></div>
+          <div><span class="v">100 ms</span><span class="l">snapshot frequency</span></div>
+        </div>
+        <ul class="bullets">
+          <li>Engineered <b>30+ microstructure features</b> across 20 L2 depth levels: multi-level OBI, micro-price deviation, exponential volume decay, 100/500 ms rolling volatility.</li>
+          <li>Async WebSocket collector following Binance's book-sync procedure with sequence-gap detection, resync and atomic Parquet/SQLite persistence.</li>
+          <li>Benchmarked <b>CatBoost, XGBoost and logistic regression</b> on a chronological split with embargo; SHAP explainability and a Streamlit monitor for imbalance, decay curves and calibration.</li>
+          <li>Identical feature code in training and live inference, verified by a streaming-vs-batch parity test (~60 tests, CI, Docker Compose).</li>
+        </ul>
+        <div class="rcard-foot">
+          <div class="stack"><span class="chip">Python</span><span class="chip">CatBoost</span><span class="chip">XGBoost</span><span class="chip">SHAP</span><span class="chip">WebSockets</span><span class="chip">Streamlit</span></div>
+          <a class="link-arrow" href="https://github.com/sakshamg251206/quant-orderbook-ml" target="_blank" rel="noopener">GitHub <svg class="icon"><use href="#i-arrow"/></svg></a>
+        </div>
+      </article>
 
-  <!-- Achievements -->
-  <section id="achievements">
-    <div class="section-head">
-      <h2>Achievements</h2>
+      <!-- Flowscope -->
+      <article class="rcard reveal">
+        <div class="rcard-top">
+          <div class="feature-kicker"><span>Live tooling · Order flow</span></div>
+          <h3>Flowscope</h3>
+          <p class="question">A live order-flow terminal for Binance USDT-M perpetuals: computes OFI on every quote change and shows in real time how much of each price move order flow explains.</p>
+        </div>
+        <div class="finding">
+          <span class="label">Built-in honesty check</span>
+          Displays <b>next-bucket R²</b> next to same-bucket R² &mdash; explaining a move is not predicting it.
+        </div>
+        <ul class="bullets">
+          <li>Per-symbol engines with prices held as integer ticks; e<sub>n</sub> per best-quote change summed into 1 s buckets; signed taker volume as baseline.</li>
+          <li>Rolling OLS of ΔMid on OFI with β, t-stat and a depth-scaling fit for λ; switchable 1/5/10/30 s buckets and 5/15/30 min windows.</li>
+          <li>Live, simulated and record/replay feeds; FastAPI WebSocket push every second; Docker, Render and Fly.io configs.</li>
+        </ul>
+        <div class="rcard-foot">
+          <div class="stack"><span class="chip">Python</span><span class="chip">FastAPI</span><span class="chip">WebSockets</span><span class="chip">Chart.js</span><span class="chip">Docker</span></div>
+          <a class="link-arrow" href="https://github.com/sakshamg251206/flowscope" target="_blank" rel="noopener">GitHub <svg class="icon"><use href="#i-arrow"/></svg></a>
+        </div>
+      </article>
+
     </div>
+  </div>
+</section>
+
+<!-- ================= PROJECTS ================= -->
+<section class="section" id="projects">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow"><span class="idx">03</span> Engineering</span>
+      <h2>ML, AI &amp; systems projects</h2>
+      <p>Production-minded builds: typed, tested, containerised and documented, with honest evaluation and limitations stated up front.</p>
+    </div>
+
+    <div class="filters reveal" role="group" aria-label="Filter projects">
+      <button class="filter" type="button" data-filter="all" aria-pressed="true">All <span class="n" data-count="all"></span></button>
+      <button class="filter" type="button" data-filter="ml" aria-pressed="false">Machine learning <span class="n" data-count="ml"></span></button>
+      <button class="filter" type="button" data-filter="genai" aria-pressed="false">Generative AI <span class="n" data-count="genai"></span></button>
+      <button class="filter" type="button" data-filter="systems" aria-pressed="false">Software &amp; systems <span class="n" data-count="systems"></span></button>
+    </div>
+
+    <div class="project-grid" id="projectGrid">
+
+      <article class="pcard reveal" data-cat="ml">
+        <div class="pcard-top"><span class="pcard-cat">ML · Security</span><span class="tag">Research</span></div>
+        <h3>Adaptive QKD<small>ML eavesdropping detection for BB84 quantum key distribution</small></h3>
+        <p>BB84 simulator (NumPy + Qiskit Aer cross-check) under noise, intercept-resend and photon-number-splitting attacks. A Random Forest drives a closed-loop CONTINUE / HARDEN / ABORT policy; an error-rate rule cannot see PNS at all.</p>
+        <div class="metrics"><span>PNS unsafe releases <b>100% → 0%</b></span><span>attack ROC-AUC <b>0.98</b></span><span><b>10k</b> sessions</span></div>
+        <div class="stack"><span class="chip">Qiskit</span><span class="chip">PyTorch LSTM</span><span class="chip">scikit-learn</span><span class="chip">Streamlit</span></div>
+        <div class="pcard-foot"><a class="link-arrow" href="https://github.com/sakshamg251206/Adaptive_QKD" target="_blank" rel="noopener">GitHub <svg class="icon"><use href="#i-arrow"/></svg></a></div>
+      </article>
+
+      <article class="pcard reveal" data-cat="ml">
+        <div class="pcard-top"><span class="pcard-cat">ML · NLP</span></div>
+        <h3>SpamShield<small>Explainable spam &amp; scam detection</small></h3>
+        <p>Calibrated Linear SVM selected by 5-fold CV over five candidate models. Returns a verdict, a probability and the words behind it; scans full <span class="mono">.mbox</span> exports and ranks the riskiest emails first.</p>
+        <div class="metrics"><span>recall <b>96.1%</b></span><span>precision <b>94.6%</b></span><span>FPR <b>0.77%</b></span><span>ROC-AUC <b>0.999</b></span></div>
+        <div class="stack"><span class="chip">scikit-learn</span><span class="chip">Streamlit</span><span class="chip">mypy --strict</span><span class="chip">82 tests</span></div>
+        <div class="pcard-foot"><a class="link-arrow" href="https://github.com/sakshamg251206/spamshield" target="_blank" rel="noopener">GitHub <svg class="icon"><use href="#i-arrow"/></svg></a></div>
+      </article>
+
+      <article class="pcard reveal" data-cat="ml">
+        <div class="pcard-top"><span class="pcard-cat">Data science · AutoML</span></div>
+        <h3>Auto Data Science<small>Upload a spreadsheet; clean, model and explain it without code</small></h3>
+        <p>Guided profile → clean → explore → train → forecast → report flow. Leakage-free scikit-learn pipelines, model leaderboard on held-out data, SHAP explanations, ARIMA forecasting with a naive back-test, HTML/PDF reports and optional Gemini chat.</p>
+        <div class="metrics"><span>every automatic step <b>logged in plain English</b></span></div>
+        <div class="stack"><span class="chip">scikit-learn</span><span class="chip">XGBoost</span><span class="chip">SHAP</span><span class="chip">statsmodels</span><span class="chip">Plotly</span></div>
+        <div class="pcard-foot"><a class="link-arrow" href="https://github.com/sakshamg251206/DataRobot" target="_blank" rel="noopener">GitHub <svg class="icon"><use href="#i-arrow"/></svg></a></div>
+      </article>
+
+      <article class="pcard reveal" data-cat="genai">
+        <div class="pcard-top"><span class="pcard-cat">GenAI · Security</span></div>
+        <h3>RagSentry<small>Multi-agent security auditing for RAG chatbots</small></h3>
+        <p>Three specialist auditor agents attack a deliberately vulnerable RAG target for prompt injection, data leakage and hallucination. Verdicts are backed by hard evidence &mdash; planted canary secrets &mdash; and compiled into a scored report with fixes.</p>
+        <div class="metrics"><span>suite runs <b>fully offline</b></span><span>CI on <b>Py 3.10 &amp; 3.13</b></span></div>
+        <div class="stack"><span class="chip">LangGraph</span><span class="chip">CrewAI</span><span class="chip">FAISS</span><span class="chip">FastAPI</span><span class="chip">Groq</span></div>
+        <div class="pcard-foot"><a class="link-arrow" href="https://github.com/sakshamg251206/RagSentry" target="_blank" rel="noopener">GitHub <svg class="icon"><use href="#i-arrow"/></svg></a></div>
+      </article>
+
+      <article class="pcard reveal" data-cat="genai">
+        <div class="pcard-top"><span class="pcard-cat">GenAI · RAG</span></div>
+        <h3>DocuRAG<small>Private chat with PDFs using a local open-source LLM</small></h3>
+        <p>Answers grounded only in retrieved passages, with page citations and excerpts. Streaming tokens, follow-up questions, MMR retrieval for diverse context, and a persistent FAISS library &mdash; nothing leaves the machine.</p>
+        <div class="metrics"><span>384-dim embeddings</span><span><b>64</b> tests, no LLM needed</span></div>
+        <div class="stack"><span class="chip">Ollama</span><span class="chip">FAISS</span><span class="chip">FastAPI</span><span class="chip">Streamlit</span><span class="chip">Docker</span></div>
+        <div class="pcard-foot"><a class="link-arrow" href="https://github.com/sakshamg251206/DocuRAG" target="_blank" rel="noopener">GitHub <svg class="icon"><use href="#i-arrow"/></svg></a></div>
+      </article>
+
+      <article class="pcard reveal" data-cat="genai">
+        <div class="pcard-top"><span class="pcard-cat">GenAI · On-device</span></div>
+        <h3>SightEcho<small>On-device camera narrator for blind &amp; low-vision users</small></h3>
+        <p>Multimodal Gemma runs entirely in the browser on WebGPU via MediaPipe: describes surroundings safety-first and reads text aloud, speaking each sentence as it streams. Offline PWA; frames never leave the device.</p>
+        <div class="metrics"><span><b>20</b> answer languages</span><span>works <b>offline</b></span></div>
+        <div class="stack"><span class="chip">React 19</span><span class="chip">TypeScript</span><span class="chip">MediaPipe</span><span class="chip">Gemma</span><span class="chip">Playwright</span></div>
+        <div class="pcard-foot"><a class="link-arrow" href="https://github.com/sakshamg251206/SightEcho" target="_blank" rel="noopener">GitHub <svg class="icon"><use href="#i-arrow"/></svg></a></div>
+      </article>
+
+      <article class="pcard reveal" data-cat="genai">
+        <div class="pcard-top"><span class="pcard-cat">GenAI · Product</span></div>
+        <h3>GhostDraft<small>Speak for two minutes, get three LinkedIn drafts in your voice</small></h3>
+        <p>Browser dictation feeds Gemini with JSON-schema-constrained output and a voice profile from past posts, returning story, contrarian and direct-insight drafts. Zero-dependency Node server with rate limiting and strict CSP.</p>
+        <div class="metrics"><span>unit + <b>e2e</b> on desktop &amp; mobile</span></div>
+        <div class="stack"><span class="chip">TypeScript</span><span class="chip">Node 22</span><span class="chip">Gemini</span><span class="chip">Vite</span><span class="chip">Vitest</span></div>
+        <div class="pcard-foot"><a class="link-arrow" href="https://github.com/sakshamg251206/GhostDraft" target="_blank" rel="noopener">GitHub <svg class="icon"><use href="#i-arrow"/></svg></a></div>
+      </article>
+
+      <article class="pcard reveal" data-cat="systems">
+        <div class="pcard-top"><span class="pcard-cat">Systems · Data</span></div>
+        <h3>WebHarvest<small>Turn any web page into a clean dataset</small></h3>
+        <p>Paste a URL and name columns in plain words; it detects repeating items, fills columns per item and exports CSV/JSON. SSRF protection including redirects, size and time limits, formula-injection-safe CSV.</p>
+        <div class="metrics"><span><b>mypy --strict</b></span><span>no-build vanilla JS UI</span></div>
+        <div class="stack"><span class="chip">FastAPI</span><span class="chip">httpx</span><span class="chip">BeautifulSoup</span><span class="chip">lxml</span><span class="chip">Docker</span></div>
+        <div class="pcard-foot"><a class="link-arrow" href="https://github.com/sakshamg251206/webharvest" target="_blank" rel="noopener">GitHub <svg class="icon"><use href="#i-arrow"/></svg></a></div>
+      </article>
+
+      <article class="pcard reveal" data-cat="systems">
+        <div class="pcard-top"><span class="pcard-cat">Systems · Civic tech</span></div>
+        <h3>LabhSetu<small>Find the Indian government schemes you qualify for</small></h3>
+        <p>Rule engine checks eligibility in the browser &mdash; no name, phone or Aadhaar &mdash; and explains why, what's one step away, which documents to bring and where to apply. Bilingual English/Hindi, plus a small JSON API.</p>
+        <div class="metrics"><span><b>27</b> central schemes</span><span>EN + हिंदी</span></div>
+        <div class="stack"><span class="chip">Node 22</span><span class="chip">Express 5</span><span class="chip">Vanilla JS</span><span class="chip">Playwright</span></div>
+        <div class="pcard-foot"><a class="link-arrow" href="https://github.com/sakshamg251206/Janvitta" target="_blank" rel="noopener">GitHub <svg class="icon"><use href="#i-arrow"/></svg></a></div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================= EXPERIENCE ================= -->
+<section class="section" id="experience">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow"><span class="idx">04</span> Experience</span>
+      <h2>Internships</h2>
+    </div>
+
+    <div class="timeline">
+      <article class="job reveal">
+        <div class="job-meta">
+          <span class="job-date">May 2026 – Jul 2026</span>
+          <span class="job-loc">Noida, India</span>
+          <a class="link-arrow" href="https://drive.google.com/file/d/1-HBFufPrYMh6_QBcjKq04eJcl3NFwrLG/view" target="_blank" rel="noopener">Certificate <svg class="icon"><use href="#i-arrow"/></svg></a>
+        </div>
+        <div>
+          <h3>Affy Pharma Pvt. Ltd.</h3>
+          <div class="role">AI/ML Intern</div>
+          <ul class="bullets">
+            <li>Reduced manual data-preparation effort by <b>35%</b> by building automated preprocessing and cleaning pipelines for manufacturing and quality-control records.</li>
+            <li>Achieved up to <b>91% validation accuracy</b> with Random Forest, XGBoost and Logistic Regression for predictive analytics and model comparison.</li>
+            <li>Improved evaluation reliability by standardising preprocessing, model-selection and performance-metric workflows, and documenting results.</li>
+            <li>Supported production deployment by working with developers to integrate ML models into internal applications.</li>
+          </ul>
+          <div class="stack"><span class="chip">Python</span><span class="chip">pandas</span><span class="chip">scikit-learn</span><span class="chip">XGBoost</span></div>
+        </div>
+      </article>
+
+      <article class="job reveal">
+        <div class="job-meta">
+          <span class="job-date">May 2025 – Jul 2025</span>
+          <span class="job-loc">Jodhpur, India</span>
+          <a class="link-arrow" href="https://drive.google.com/file/d/1YdqQWmmu2sLstR6ItwPYskD5IMqRMPn_/view?usp=drive_link" target="_blank" rel="noopener">Certificate <svg class="icon"><use href="#i-arrow"/></svg></a>
+          <a class="link-arrow" href="https://github.com/sakshamg251206/Adaptive_QKD" target="_blank" rel="noopener">Code <svg class="icon"><use href="#i-arrow"/></svg></a>
+        </div>
+        <div>
+          <h3>Indian Institute of Technology, Jodhpur</h3>
+          <div class="role">Research Intern — Quantum Computing &amp; Cryptography</div>
+          <ul class="bullets">
+            <li>Built a 4-layer QKD security framework in Qiskit simulating BB84 under depolarising noise, intercept-resend and PNS attacks, generating <b>10,000 labelled sessions</b> across 5 attack/channel classes.</li>
+            <li>Achieved <b>80.6% multiclass accuracy</b> and <b>0.987 binary ROC-AUC</b> with a Random Forest on 8 statistical features including QBER, timing jitter, sifting ratio and QBER variance.</li>
+            <li>Built a PyTorch LSTM on 20-step QBER time series to detect temporal attack patterns and benchmarked it against the Random Forest baseline.</li>
+            <li>Designed a closed-loop adaptive defence policy with CONTINUE, HARDEN and ABORT actions evaluated at up to 4 dynamic checkpoints using predicted attack probabilities.</li>
+          </ul>
+          <div class="stack"><span class="chip">Qiskit</span><span class="chip">PyTorch</span><span class="chip">scikit-learn</span><span class="chip">NumPy</span></div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ACHIEVEMENTS ================= -->
+<section class="section" id="achievements">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow"><span class="idx">05</span> Competitions &amp; achievements</span>
+      <h2>Track record</h2>
+    </div>
+
     <div class="ach-grid">
-      <div class="ach">
-        <span class="ach-num mono">Gold</span>
-        <h3>WorldQuant Brain</h3>
-        <p>Developed, backtested, and refined predictive signals using financial data fields, mathematical operators, cross-sectional ranking, neutralization, and decay. Best alpha: 1.72 Sharpe, 1.77 fitness, 13.31% return, 47.11 bps margin, 5.65% turnover, 14.79% drawdown — Sharpe stayed positive across 2019–2023.</p>
-      </div>
-      <div class="ach">
-        <span class="ach-num mono">Specialist</span>
-        <h3>Codeforces</h3>
-        <p>Competitive programming with a strong grounding in algorithms, data structures, and problem-solving under time constraints.</p>
+      <article class="ach reveal">
+        <div class="ach-top">
+          <span class="ach-badge">● WorldQuant BRAIN · Gold level</span>
+          <a class="link-arrow" href="https://drive.google.com/file/d/13neWKQFsuAHhJEAAKtW00X7jx-Gj_M9X/view?usp=drive_link" target="_blank" rel="noopener">Proof <svg class="icon"><use href="#i-arrow"/></svg></a>
+        </div>
+        <h3>Systematic alpha research</h3>
+        <p>Developed, backtested and refined predictive signals using financial data fields, mathematical operators, cross-sectional ranking, neutralisation and decay. Best alpha kept a positive Sharpe in every year 2019–2023.</p>
+        <div class="alpha-stats">
+          <div><span class="v">1.72</span><span class="l">Sharpe</span></div>
+          <div><span class="v">1.77</span><span class="l">Fitness</span></div>
+          <div><span class="v">13.31%</span><span class="l">Returns</span></div>
+          <div><span class="v">47.11</span><span class="l">Margin (bps)</span></div>
+          <div><span class="v">5.65%</span><span class="l">Turnover</span></div>
+          <div><span class="v">14.79%</span><span class="l">Drawdown</span></div>
+        </div>
+      </article>
+
+      <div class="ach-col">
+        <article class="ach reveal">
+          <div class="ach-top">
+            <span class="ach-badge blue">● Codeforces · Expert</span>
+            <a class="link-arrow" href="https://codeforces.com/profile/sakshamgarg87" target="_blank" rel="noopener">Profile <svg class="icon"><use href="#i-arrow"/></svg></a>
+          </div>
+          <div class="big-num">1603<small>max rating</small></div>
+          <p>Competitive programming with a strong grounding in algorithms, data structures and problem-solving under time constraints.</p>
+        </article>
+
+        <article class="ach reveal">
+          <div class="ach-top">
+            <span class="ach-badge green">● Amazon ML Challenge 2026</span>
+          </div>
+          <div class="big-num" style="color:var(--accent)">0.9614<small>OOF macro F0.5</small></div>
+          <p>Large-scale business entity resolution across three data sources: TF-IDF blocking per state, pair features and a stacked LightGBM + ExtraTrees + MLP ensemble, validated out-of-fold across 19 states (414k source records). Every experiment, including rejected ones, is logged.</p>
+          <span class="footnote">Out-of-fold validation score, not a leaderboard score.</span>
+        </article>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Education -->
-  <section id="education">
-    <div class="section-head">
-      <h2>Education &amp; certifications</h2>
+<!-- ================= SKILLS ================= -->
+<section class="section" id="skills">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow"><span class="idx">06</span> Toolkit</span>
+      <h2>Skills &amp; technologies</h2>
+    </div>
+    <div class="skills">
+      <div class="skill-group reveal">
+        <h3><span class="mono">01</span>Quant finance</h3>
+        <div class="stack">
+          <span class="chip">Alpha research</span><span class="chip">Statistical backtesting</span><span class="chip">Market microstructure</span><span class="chip">Order-flow imbalance</span><span class="chip">Transaction-cost modelling</span><span class="chip">Walk-forward validation</span><span class="chip">Time-series analysis</span><span class="chip">Risk analysis</span>
+        </div>
+      </div>
+      <div class="skill-group reveal">
+        <h3><span class="mono">02</span>Statistics &amp; methods</h3>
+        <div class="stack">
+          <span class="chip">Probability &amp; statistics</span><span class="chip">Regression / OLS</span><span class="chip">Classification</span><span class="chip">Hypothesis testing</span><span class="chip">Block bootstrap</span><span class="chip">Survival analysis</span><span class="chip">Parameter sensitivity</span><span class="chip">Out-of-sample testing</span>
+        </div>
+      </div>
+      <div class="skill-group reveal">
+        <h3><span class="mono">03</span>Machine learning</h3>
+        <div class="stack">
+          <span class="chip">PyTorch</span><span class="chip">TensorFlow</span><span class="chip">scikit-learn</span><span class="chip">XGBoost</span><span class="chip">CatBoost</span><span class="chip">LightGBM</span><span class="chip">SHAP</span><span class="chip">pandas</span><span class="chip">NumPy</span><span class="chip">SciPy</span>
+        </div>
+      </div>
+      <div class="skill-group reveal">
+        <h3><span class="mono">04</span>Generative AI</h3>
+        <div class="stack">
+          <span class="chip">RAG</span><span class="chip">LangGraph</span><span class="chip">CrewAI</span><span class="chip">FAISS</span><span class="chip">Ollama</span><span class="chip">Gemini API</span><span class="chip">MediaPipe / Gemma</span><span class="chip">Structured outputs</span>
+        </div>
+      </div>
+      <div class="skill-group reveal">
+        <h3><span class="mono">05</span>Languages</h3>
+        <div class="stack">
+          <span class="chip">Python</span><span class="chip">C++ (C++20)</span><span class="chip">SQL</span><span class="chip">JavaScript</span><span class="chip">TypeScript</span>
+        </div>
+      </div>
+      <div class="skill-group reveal">
+        <h3><span class="mono">06</span>Engineering &amp; tools</h3>
+        <div class="stack">
+          <span class="chip">Git</span><span class="chip">Linux / macOS</span><span class="chip">Docker</span><span class="chip">FastAPI</span><span class="chip">WebSockets</span><span class="chip">Next.js</span><span class="chip">Streamlit</span><span class="chip">Qiskit</span><span class="chip">Parquet</span><span class="chip">pytest / CI</span><span class="chip">Jupyter</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= EDUCATION ================= -->
+<section class="section" id="education">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow"><span class="idx">07</span> Education &amp; certifications</span>
+      <h2>Foundations</h2>
     </div>
     <div class="edu-grid">
-      <div class="edu-block">
+      <div class="edu-card reveal">
+        <span class="tag">2024 – 2029</span>
         <h3>The LNM Institute of Information Technology</h3>
-        <div class="edu-sub mono">B.Tech–M.Tech, Electronics &amp; Communication Engineering · Jaipur, India · 2024–2029</div>
-        <p>Coursework: Probability &amp; Statistics, Machine Learning, Linear Algebra, Data Structures &amp; Algorithms, Optimization, Numerical Methods, Stochastic Calculus.</p>
+        <div class="deg">B.Tech–M.Tech (dual degree), Electronics &amp; Communication Engineering</div>
+        <div class="meta">Jaipur, India</div>
+        <h4>Relevant coursework</h4>
+        <div class="stack">
+          <span class="chip">Probability &amp; Statistics</span><span class="chip">Stochastic Calculus</span><span class="chip">Machine Learning</span><span class="chip">Linear Algebra</span><span class="chip">Optimization</span><span class="chip">Numerical Methods</span><span class="chip">Data Structures &amp; Algorithms</span>
+        </div>
       </div>
-      <ul class="cert-list">
-        <li>Financial Engineering and Risk Management &amp; Term-Structure and Credit Derivatives<span class="cert-org mono">Columbia University</span></li>
-        <li>Markets Quantitative Analysis (MQA) Job Simulation<span class="cert-org mono">Citi</span></li>
-      </ul>
+      <div class="edu-card reveal">
+        <h4>Certifications</h4>
+        <ul class="cert-list">
+          <li class="cert">
+            <div><b>Financial Engineering and Risk Management</b><span>Columbia University · Coursera</span></div>
+            <a class="btn btn-sm" href="https://coursera.org/verify/7XQ9YCS92C2R" target="_blank" rel="noopener"><svg class="icon"><use href="#i-check"/></svg>Verify</a>
+          </li>
+          <li class="cert">
+            <div><b>Term-Structure and Credit Derivatives</b><span>Columbia University · Coursera</span></div>
+            <a class="btn btn-sm" href="https://www.coursera.org/account/accomplishments/verify/ZSFGH4JMEJE6" target="_blank" rel="noopener"><svg class="icon"><use href="#i-check"/></svg>Verify</a>
+          </li>
+          <li class="cert">
+            <div><b>Markets Quantitative Analysis (MQA) Job Simulation</b><span>Citi</span></div>
+            <a class="btn btn-sm" href="https://drive.google.com/file/d/1BtkI9dGLtPH_XL198zF3c6BELzFKscV6/view?usp=drive_link" target="_blank" rel="noopener"><svg class="icon"><use href="#i-check"/></svg>View</a>
+          </li>
+        </ul>
+      </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Contact -->
-  <section id="contact">
-    <div class="section-head">
-      <h2>Contact</h2>
+<!-- ================= CONTACT ================= -->
+<section class="section" id="contact">
+  <div class="wrap">
+    <div class="contact">
+      <div class="reveal">
+        <span class="eyebrow"><span class="idx">08</span> Contact</span>
+        <h2>Let's talk research.</h2>
+        <p>Open to quantitative research, quant trading and ML engineering internships. Email is the fastest way to reach me &mdash; I'm happy to walk through any of the research above in detail.</p>
+        <div class="email-row">
+          <a class="btn btn-primary" href="mailto:sakshamgarg87@gmail.com"><svg class="icon"><use href="#i-mail"/></svg>sakshamgarg87@gmail.com</a>
+          <button class="btn" type="button" id="copyEmail" data-email="sakshamgarg87@gmail.com"><svg class="icon"><use href="#i-copy"/></svg>Copy</button>
+          <a class="btn btn-ghost" href="assets/docs/Saksham_Garg_Resume.pdf" download><svg class="icon"><use href="#i-download"/></svg>Résumé (PDF)</a>
+        </div>
+      </div>
+      <nav class="profiles reveal" aria-label="Profiles">
+        <a class="profile" href="https://github.com/sakshamg251206" target="_blank" rel="noopener">
+          <span class="ic"><svg class="icon"><use href="#i-github"/></svg></span>
+          <div><b>GitHub</b><span>github.com/sakshamg251206</span></div>
+          <svg class="icon arrow"><use href="#i-arrow"/></svg>
+        </a>
+        <a class="profile" href="https://www.linkedin.com/in/saksham-garg-997560319/" target="_blank" rel="noopener">
+          <span class="ic"><svg class="icon"><use href="#i-linkedin"/></svg></span>
+          <div><b>LinkedIn</b><span>in/saksham-garg-997560319</span></div>
+          <svg class="icon arrow"><use href="#i-arrow"/></svg>
+        </a>
+        <a class="profile" href="https://codeforces.com/profile/sakshamgarg87" target="_blank" rel="noopener">
+          <span class="ic"><svg class="icon"><use href="#i-codeforces"/></svg></span>
+          <div><b>Codeforces</b><span>sakshamgarg87 · Expert, 1603</span></div>
+          <svg class="icon arrow"><use href="#i-arrow"/></svg>
+        </a>
+        <a class="profile" href="mailto:sakshamgarg87@gmail.com">
+          <span class="ic"><svg class="icon"><use href="#i-mail"/></svg></span>
+          <div><b>Email</b><span>sakshamgarg87@gmail.com</span></div>
+          <svg class="icon arrow"><use href="#i-arrow"/></svg>
+        </a>
+      </nav>
     </div>
-    <p class="contact-intro">Open to summer quantitative research roles. The fastest way to reach me is email.</p>
-    <div class="contact-rows">
-      <a href="mailto:sakshamgarg87@gmail.com" class="contact-row">
-        <span class="c-label"><i class="fas fa-envelope"></i> Email</span>
-        <span class="c-value">sakshamgarg87@gmail.com</span>
-      </a>
-      <a href="tel:+919650650890" class="contact-row">
-        <span class="c-label"><i class="fas fa-phone"></i> Phone</span>
-        <span class="c-value">+91 96506 50890</span>
-      </a>
-      <a href="https://linkedin.com/in/saksham-garg-997560319" target="_blank" class="contact-row">
-        <span class="c-label"><i class="fab fa-linkedin-in"></i> LinkedIn</span>
-        <span class="c-value">saksham-garg-997560319</span>
-      </a>
-      <a href="https://github.com/sakshamg251206" target="_blank" class="contact-row">
-        <span class="c-label"><i class="fab fa-github"></i> GitHub</span>
-        <span class="c-value">sakshamg251206</span>
-      </a>
-    </div>
-  </section>
-
-  <footer>
-    <span>© <span id="year"></span> Saksham Garg</span>
-    <span>Gurugram, India</span>
-  </footer>
+  </div>
+</section>
 
 </main>
 
-<script>
-  document.getElementById('year').textContent = new Date().getFullYear();
+<footer class="footer">
+  <div class="wrap">
+    <span>© <span id="year">2026</span> Saksham Garg · Gurugram, India</span>
+    <span class="mono">Hand-built · no framework · <a href="https://github.com/sakshamg251206/portfolio" target="_blank" rel="noopener">source</a></span>
+  </div>
+</footer>
 
-  const header = document.getElementById('header');
-  window.addEventListener('scroll', () => {
-    header.classList.toggle('scrolled', window.scrollY > 8);
-  });
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  const navToggle = document.getElementById('navToggle');
-  const navLinks = document.getElementById('navLinks');
-  navToggle.addEventListener('click', () => navLinks.classList.toggle('active'));
-  navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('active')));
-</script>
-
+<script src="assets/js/alpha-lab-data.js" defer></script>
+<script src="assets/js/main.js" defer></script>
 </body>
 </html>
