@@ -28,7 +28,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;550;600&family=Inter+Tight:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/styles.css?v=20261001c">
+<link rel="stylesheet" href="assets/css/styles.css?v=20261001d">
 
 <script type="application/ld+json">
 {
@@ -67,6 +67,8 @@
     <symbol id="i-brain" viewBox="0 0 24 24"><circle cx="5" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="19" cy="18" r="2"/><path d="m6.6 7.2 3.8 3.6m3.2 0 3.8-3.6M6.6 16.8l3.8-3.6m3.2 0 3.8 3.6"/></symbol>
     <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3v4m0 10v4M3 12h4m10 0h4"/><path d="m12 8 1.5 2.5L16 12l-2.5 1.5L12 16l-1.5-2.5L8 12l2.5-1.5L12 8Z"/></symbol>
     <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v3m6-3v3M9 19v3m6-3v3M2 9h3m-3 6h3m14-6h3m-3 6h3"/></symbol>
+    <symbol id="i-chev-l" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+    <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
     <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></symbol>
   </defs>
 </svg>
@@ -435,17 +437,25 @@
       <p>Production-minded builds: typed, tested, containerised and documented, with honest evaluation and limitations stated up front.</p>
     </div>
 
-    <div class="filters reveal" role="group" aria-label="Filter projects">
-      <button class="filter" type="button" data-filter="all" aria-pressed="true">All <span class="n" data-count="all"></span></button>
-      <button class="filter" type="button" data-filter="ml" aria-pressed="false">Machine learning <span class="n" data-count="ml"></span></button>
-      <button class="filter" type="button" data-filter="genai" aria-pressed="false">Generative AI <span class="n" data-count="genai"></span></button>
-      <button class="filter" type="button" data-filter="quantum" aria-pressed="false">Quantum computing <span class="n" data-count="quantum"></span></button>
-      <button class="filter" type="button" data-filter="systems" aria-pressed="false">Software &amp; systems <span class="n" data-count="systems"></span></button>
+    <div class="proj-bar reveal">
+      <div class="filters" role="group" aria-label="Filter projects">
+        <button class="filter" type="button" data-filter="all" aria-pressed="true">All <span class="n" data-count="all"></span></button>
+        <button class="filter" type="button" data-filter="ml" aria-pressed="false">Machine learning <span class="n" data-count="ml"></span></button>
+        <button class="filter" type="button" data-filter="genai" aria-pressed="false">Generative AI <span class="n" data-count="genai"></span></button>
+        <button class="filter" type="button" data-filter="quantum" aria-pressed="false">Quantum computing <span class="n" data-count="quantum"></span></button>
+        <button class="filter" type="button" data-filter="systems" aria-pressed="false">Software &amp; systems <span class="n" data-count="systems"></span></button>
+      </div>
+      <div class="carousel-nav">
+        <span class="carousel-count mono" id="projCount" aria-live="polite"></span>
+        <button class="icon-btn" type="button" id="projPrev" aria-label="Previous projects" aria-controls="projectGrid"><svg class="icon"><use href="#i-chev-l"/></svg></button>
+        <button class="icon-btn" type="button" id="projNext" aria-label="Next projects" aria-controls="projectGrid"><svg class="icon"><use href="#i-chev-r"/></svg></button>
+      </div>
     </div>
 
-    <div class="project-grid" id="projectGrid">
+    <div class="carousel reveal">
+      <div class="project-grid" id="projectGrid" tabindex="0" aria-label="Projects, scroll horizontally">
 
-      <article class="pcard reveal" data-cat="quantum">
+      <article class="pcard" data-cat="quantum">
         <div class="pcard-top"><span class="pcard-cat">Quantum computing · Cryptography</span><span class="tag">IIT Jodhpur</span></div>
         <h3>Adaptive QKD<small>Eavesdropping detection and adaptive defence for BB84 quantum key distribution</small></h3>
         <p>BB84 simulator (NumPy + Qiskit Aer cross-check) under noise, intercept-resend and photon-number-splitting attacks. A Random Forest drives a closed-loop CONTINUE / HARDEN / ABORT policy; an error-rate rule cannot see PNS at all.</p>
@@ -454,7 +464,7 @@
         <div class="pcard-foot"><a class="link-arrow" href="https://github.com/sakshamg251206/Adaptive_QKD" target="_blank" rel="noopener">GitHub <svg class="icon"><use href="#i-arrow"/></svg></a></div>
       </article>
 
-      <article class="pcard reveal" data-cat="ml">
+      <article class="pcard" data-cat="ml">
         <div class="pcard-top"><span class="pcard-cat">ML · NLP</span></div>
         <h3>SpamShield<small>Explainable spam &amp; scam detection</small></h3>
         <p>Calibrated Linear SVM selected by 5-fold CV over five candidate models. Returns a verdict, a probability and the words behind it; scans full <span class="mono">.mbox</span> exports and ranks the riskiest emails first.</p>
@@ -463,7 +473,7 @@
         <div class="pcard-foot"><a class="link-arrow" href="https://github.com/sakshamg251206/spamshield" target="_blank" rel="noopener">GitHub <svg class="icon"><use href="#i-arrow"/></svg></a></div>
       </article>
 
-      <article class="pcard reveal" data-cat="ml">
+      <article class="pcard" data-cat="ml">
         <div class="pcard-top"><span class="pcard-cat">Data science · AutoML</span></div>
         <h3>Auto Data Science<small>Upload a spreadsheet; clean, model and explain it without code</small></h3>
         <p>Guided profile → clean → explore → train → forecast → report flow. Leakage-free scikit-learn pipelines, model leaderboard on held-out data, SHAP explanations, ARIMA forecasting with a naive back-test, HTML/PDF reports and optional Gemini chat.</p>
@@ -472,7 +482,7 @@
         <div class="pcard-foot"><a class="link-arrow" href="https://github.com/sakshamg251206/DataRobot" target="_blank" rel="noopener">GitHub <svg class="icon"><use href="#i-arrow"/></svg></a></div>
       </article>
 
-      <article class="pcard reveal" data-cat="genai">
+      <article class="pcard" data-cat="genai">
         <div class="pcard-top"><span class="pcard-cat">GenAI · Security</span></div>
         <h3>RagSentry<small>Multi-agent security auditing for RAG chatbots</small></h3>
         <p>Three specialist auditor agents attack a deliberately vulnerable RAG target for prompt injection, data leakage and hallucination. Verdicts are backed by hard evidence &mdash; planted canary secrets &mdash; and compiled into a scored report with fixes.</p>
@@ -481,7 +491,7 @@
         <div class="pcard-foot"><a class="link-arrow" href="https://github.com/sakshamg251206/RagSentry" target="_blank" rel="noopener">GitHub <svg class="icon"><use href="#i-arrow"/></svg></a></div>
       </article>
 
-      <article class="pcard reveal" data-cat="genai">
+      <article class="pcard" data-cat="genai">
         <div class="pcard-top"><span class="pcard-cat">GenAI · RAG</span></div>
         <h3>DocuRAG<small>Private chat with PDFs using a local open-source LLM</small></h3>
         <p>Answers grounded only in retrieved passages, with page citations and excerpts. Streaming tokens, follow-up questions, MMR retrieval for diverse context, and a persistent FAISS library &mdash; nothing leaves the machine.</p>
@@ -490,7 +500,7 @@
         <div class="pcard-foot"><a class="link-arrow" href="https://github.com/sakshamg251206/DocuRAG" target="_blank" rel="noopener">GitHub <svg class="icon"><use href="#i-arrow"/></svg></a></div>
       </article>
 
-      <article class="pcard reveal" data-cat="genai">
+      <article class="pcard" data-cat="genai">
         <div class="pcard-top"><span class="pcard-cat">GenAI · On-device</span></div>
         <h3>SightEcho<small>On-device camera narrator for blind &amp; low-vision users</small></h3>
         <p>Multimodal Gemma runs entirely in the browser on WebGPU via MediaPipe: describes surroundings safety-first and reads text aloud, speaking each sentence as it streams. Offline PWA; frames never leave the device.</p>
@@ -499,7 +509,7 @@
         <div class="pcard-foot"><a class="link-arrow" href="https://github.com/sakshamg251206/SightEcho" target="_blank" rel="noopener">GitHub <svg class="icon"><use href="#i-arrow"/></svg></a></div>
       </article>
 
-      <article class="pcard reveal" data-cat="genai">
+      <article class="pcard" data-cat="genai">
         <div class="pcard-top"><span class="pcard-cat">GenAI · Product</span></div>
         <h3>GhostDraft<small>Speak for two minutes, get three LinkedIn drafts in your voice</small></h3>
         <p>Browser dictation feeds Gemini with JSON-schema-constrained output and a voice profile from past posts, returning story, contrarian and direct-insight drafts. Zero-dependency Node server with rate limiting and strict CSP.</p>
@@ -508,7 +518,7 @@
         <div class="pcard-foot"><a class="link-arrow" href="https://github.com/sakshamg251206/GhostDraft" target="_blank" rel="noopener">GitHub <svg class="icon"><use href="#i-arrow"/></svg></a></div>
       </article>
 
-      <article class="pcard reveal" data-cat="systems">
+      <article class="pcard" data-cat="systems">
         <div class="pcard-top"><span class="pcard-cat">Systems · Data</span></div>
         <h3>WebHarvest<small>Turn any web page into a clean dataset</small></h3>
         <p>Paste a URL and name columns in plain words; it detects repeating items, fills columns per item and exports CSV/JSON. SSRF protection including redirects, size and time limits, formula-injection-safe CSV.</p>
@@ -517,7 +527,7 @@
         <div class="pcard-foot"><a class="link-arrow" href="https://github.com/sakshamg251206/webharvest" target="_blank" rel="noopener">GitHub <svg class="icon"><use href="#i-arrow"/></svg></a></div>
       </article>
 
-      <article class="pcard reveal" data-cat="systems">
+      <article class="pcard" data-cat="systems">
         <div class="pcard-top"><span class="pcard-cat">Systems · Civic tech</span></div>
         <h3>LabhSetu<small>Find the Indian government schemes you qualify for</small></h3>
         <p>Rule engine checks eligibility in the browser &mdash; no name, phone or Aadhaar &mdash; and explains why, what's one step away, which documents to bring and where to apply. Bilingual English/Hindi, plus a small JSON API.</p>
@@ -526,6 +536,8 @@
         <div class="pcard-foot"><a class="link-arrow" href="https://github.com/sakshamg251206/Janvitta" target="_blank" rel="noopener">GitHub <svg class="icon"><use href="#i-arrow"/></svg></a></div>
       </article>
 
+    </div>
+    <div class="carousel-progress" aria-hidden="true"><span id="projProgress"></span></div>
     </div>
   </div>
 </section>
@@ -799,7 +811,7 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="assets/js/alpha-lab-data.js?v=20261001c" defer></script>
-<script src="assets/js/main.js?v=20261001c" defer></script>
+<script src="assets/js/alpha-lab-data.js?v=20261001d" defer></script>
+<script src="assets/js/main.js?v=20261001d" defer></script>
 </body>
 </html>

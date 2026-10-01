@@ -66,8 +66,8 @@
   });
 
   /* ---------- Ticker: duplicate content for a seamless loop ---------- */
-  var track = $("#tickerTrack");
-  if (track) track.innerHTML += track.innerHTML;
+  var tickerTrack = $("#tickerTrack");
+  if (tickerTrack) tickerTrack.innerHTML += tickerTrack.innerHTML;
 
   /* ---------- Project filters ---------- */
   var cards = $$("#projectGrid .pcard");
@@ -81,10 +81,72 @@
     cards.forEach(function (c) {
       var show = f === "all" || c.dataset.cat === f;
       c.hidden = !show;
-      if (show) c.classList.add("in");
     });
   }
   filters.forEach(function (b) { b.addEventListener("click", function () { applyFilter(b.dataset.filter); }); });
+
+  /* ---------- Project carousel ---------- */
+  var track = $("#projectGrid");
+  var prevBtn = $("#projPrev");
+  var nextBtn = $("#projNext");
+  var countEl = $("#projCount");
+  var progressEl = $("#projProgress");
+  function visibleCards() { return cards.filter(function (c) { return !c.hidden; }); }
+  function step() {
+    var v = visibleCards();
+    if (v.length < 2) return track.clientWidth;
+    return v[1].offsetLeft - v[0].offsetLeft;
+  }
+  function updateCarousel() {
+    var v = visibleCards();
+    var max = track.scrollWidth - track.clientWidth;
+    var x = track.scrollLeft;
+    var s = step() || 1;
+    var perView = Math.max(1, Math.round((track.clientWidth + 16) / s));
+    var first = Math.min(v.length - 1, Math.round(x / s));
+    var last = Math.min(v.length, first + perView);
+    prevBtn.disabled = x <= 2;
+    nextBtn.disabled = x >= max - 2;
+    countEl.textContent = v.length ? (first + 1) + (last > first + 1 ? "–" + last : "") + " of " + v.length : "";
+    var frac = v.length ? Math.min(1, perView / v.length) : 1;
+    progressEl.style.width = frac * 100 + "%";
+    progressEl.style.transform = "translateX(" + (max > 0 ? (x / max) * (1 / frac - 1) * 100 : 0) + "%)";
+  }
+  var target = null;
+  function page(dir) {
+    var v = visibleCards();
+    if (!v.length) return;
+    var s = step() || 1;
+    var perView = Math.max(1, Math.round((track.clientWidth + 16) / s));
+    var max = track.scrollWidth - track.clientWidth;
+    // Page from the pending target while a smooth scroll is still running, so rapid clicks stay aligned.
+    var from = target !== null ? target : Math.round(track.scrollLeft / s);
+    target = Math.max(0, Math.min(v.length - 1, from + dir * perView));
+    var left = Math.min(max, v[target].offsetLeft - v[0].offsetLeft);
+    if (left >= max) target = Math.round(max / s);
+    track.scrollTo({ left: left, behavior: reduceMotion ? "instant" : "smooth" });
+  }
+  var settle;
+  track.addEventListener("scroll", function () {
+    clearTimeout(settle);
+    settle = setTimeout(function () { target = null; }, 150);
+  }, { passive: true });
+  prevBtn.addEventListener("click", function () { page(-1); });
+  nextBtn.addEventListener("click", function () { page(1); });
+  track.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowRight") { e.preventDefault(); page(1); }
+    if (e.key === "ArrowLeft") { e.preventDefault(); page(-1); }
+  });
+  var raf;
+  track.addEventListener("scroll", function () { cancelAnimationFrame(raf); raf = requestAnimationFrame(updateCarousel); }, { passive: true });
+  window.addEventListener("resize", updateCarousel);
+  filters.forEach(function (b) {
+    b.addEventListener("click", function () { target = null; track.scrollTo({ left: 0, behavior: "instant" }); updateCarousel(); });
+  });
+  $$("[data-jump-filter]").forEach(function (a) {
+    a.addEventListener("click", function () { target = null; track.scrollTo({ left: 0, behavior: "instant" }); updateCarousel(); });
+  });
+  updateCarousel();
   $$("[data-jump-filter]").forEach(function (a) {
     a.addEventListener("click", function () { applyFilter(a.getAttribute("data-jump-filter")); });
   });

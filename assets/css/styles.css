@@ -373,7 +373,16 @@ ul { margin: 0; padding: 0; }
 .hyp-table tr:last-child td { border-bottom: none; }
 
 /* ---------- Projects ---------- */
-.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 28px; }
+.proj-bar { display: flex; justify-content: space-between; align-items: center; gap: 16px 24px; flex-wrap: wrap; margin-bottom: 24px; }
+.filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.carousel-nav { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.carousel-count { font-size: 12px; color: var(--muted); margin-right: 6px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.carousel-nav .icon-btn { width: 40px; height: 40px; border-radius: 999px; }
+.carousel-nav .icon-btn .icon { width: 18px; height: 18px; }
+.carousel-nav .icon-btn:disabled { opacity: 0.35; cursor: default; background: transparent; border-color: var(--line); color: var(--text-2); }
+.carousel { position: relative; }
+.carousel-progress { height: 2px; background: var(--line); border-radius: 2px; margin-top: 20px; overflow: hidden; }
+.carousel-progress span { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 2px; transition: width 0.25s ease, transform 0.25s ease; }
 .filter {
   display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line);
   background: transparent; font-size: 13.5px; color: var(--text-2); cursor: pointer; transition: all 0.15s ease;
@@ -383,7 +392,15 @@ ul { margin: 0; padding: 0; }
 .filter[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
 .filter[aria-pressed="true"] .n { color: var(--bg); opacity: 0.6; }
 
-.project-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.project-grid {
+  --per-view: 3;
+  display: grid; grid-auto-flow: column; grid-auto-columns: calc((100% - (var(--per-view) - 1) * 16px) / var(--per-view)); gap: 16px;
+  overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-behavior: smooth;
+  scrollbar-width: none; padding: 4px 0; margin: -4px 0;
+}
+.project-grid::-webkit-scrollbar { display: none; }
+.project-grid:focus-visible { outline-offset: 6px; }
+.pcard { scroll-snap-align: start; }
 .pcard {
   display: flex; flex-direction: column; gap: 14px; padding: 22px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel);
   transition: border-color 0.2s ease, transform 0.2s ease, opacity 0.25s ease;
@@ -501,7 +518,7 @@ ul { margin: 0; padding: 0; }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 1080px) {
-  .project-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .project-grid { --per-view: 2; }
   .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .kpi:nth-child(4) { border-left: none; }
   .kpi:nth-child(n + 4) { border-top: 1px solid var(--line); }
@@ -527,7 +544,13 @@ ul { margin: 0; padding: 0; }
   body { font-size: 15.5px; }
   .hide-sm { display: none; }
   .nav-actions .btn-sm { padding: 0 10px; }
-  .project-grid, .skills, .tracks { grid-template-columns: minmax(0, 1fr); }
+  .skills, .tracks { grid-template-columns: minmax(0, 1fr); }
+  .project-grid { grid-auto-columns: 86%; }
+  .carousel-count { display: none; }
+  .proj-bar { flex-wrap: nowrap; flex-direction: column; align-items: stretch; gap: 14px; }
+  .filters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 calc(-1 * var(--gutter)); padding: 0 var(--gutter); }
+  .filters::-webkit-scrollbar { display: none; }
+  .filter { flex: none; }
   .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .kpi:nth-child(n) { border-left: 1px solid var(--line); border-top: 1px solid var(--line); }
   .kpi:nth-child(odd) { border-left: none; }
@@ -551,7 +574,7 @@ ul { margin: 0; padding: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
+  html, .project-grid { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
   .ticker-track { animation: none; }
   .js .reveal { opacity: 1; transform: none; }
