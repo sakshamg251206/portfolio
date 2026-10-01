@@ -446,6 +446,12 @@ ul { margin: 0; padding: 0; }
 .edu-card h3 { font-size: 22px; margin: 10px 0 6px; }
 .edu-card .deg { color: var(--text-2); font-size: 15px; margin-bottom: 4px; }
 .edu-card .meta { font-family: var(--font-mono); font-size: 12px; color: var(--muted); margin-bottom: 22px; }
+.edu-col { display: grid; gap: 16px; align-content: start; }
+.edu-scores { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: 8px; margin: 14px 0 22px; }
+.edu-scores div { padding: 12px 14px; }
+.edu-scores div + div { border-left: 1px solid var(--line); }
+.edu-scores .v { display: block; font-family: var(--font-mono); font-size: 20px; font-weight: 600; color: var(--accent); font-variant-numeric: tabular-nums; }
+.edu-scores .l { display: block; font-size: 11.5px; color: var(--muted); }
 .edu-card h4 { font-family: var(--font-mono); font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
 .cert-list { list-style: none; display: grid; gap: 0; }
 .cert { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 18px 0; border-bottom: 1px solid var(--line); }
